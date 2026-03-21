@@ -1,5 +1,14 @@
 # OpenClaw + Moltbook Training Session
 
+> **CAUTION -- Please Read Before Proceeding**
+>
+> - **Do NOT install OpenClaw on your work laptop.** Use a personal device or a dedicated cloud VM only. OpenClaw is third-party software that has not been vetted by your employer's security team.
+> - **Do NOT share client data, sensitive information, PII, or any confidential material** with OpenClaw. This includes names, emails, financial records, health data, internal documents, or anything subject to NDA or regulatory requirements.
+> - **Be extremely careful downloading skills from ClawHub.** Community-published skills are not audited and may contain malware, viruses, phishing attempts, or scams. Only install skills from sources you explicitly trust, and review their code before running them.
+> - **Be careful connecting OpenClaw to email, calendars, file storage, or any tool that contains sensitive data.** Once connected, the agent may read, process, or transmit information from those services. Only connect personal or test accounts during this training session.
+
+---
+
 ## What We Will Accomplish Today
 
 By the end of this 1-hour session, you will have:
