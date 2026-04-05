@@ -56,7 +56,30 @@ Choose **Option A** (Google Cloud) or **Option B** (Personal Laptop) below.
 
 #### Option A: Setup on Google Cloud Platform
 
-**1.1 -- Authenticate and create a GCP project**
+**1.1 -- Install the Google Cloud CLI (`gcloud`)**
+
+Follow the instructions for your operating system:
+
+- **macOS:** `brew install --cask google-cloud-sdk`
+- **Linux (Debian/Ubuntu):**
+
+  ```bash
+  sudo apt-get install -y apt-transport-https ca-certificates gnupg curl
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+  sudo apt-get update && sudo apt-get install -y google-cloud-cli
+  ```
+
+- **Windows (WSL2):** Follow the Linux instructions above inside your WSL2 terminal.
+- **Other platforms:** See [cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
+
+Verify the installation:
+
+```bash
+gcloud --version
+```
+
+**1.2 -- Authenticate and create a GCP project**
 
 ```bash
 gcloud init
@@ -66,7 +89,7 @@ gcloud config set project my-openclaw-project
 gcloud services enable compute.googleapis.com
 ```
 
-**1.2 -- Create a Compute Engine VM**
+**1.3 -- Create a Compute Engine VM**
 
 ```bash
 gcloud compute instances create openclaw-gateway \
@@ -79,13 +102,13 @@ gcloud compute instances create openclaw-gateway \
 
 > An `e2-small` instance (~~$12/mo) is the minimum recommended. Use `e2-medium` (~~$25/mo) for a more comfortable experience.
 
-**1.3 -- SSH into your VM**
+**1.4 -- SSH into your VM**
 
 ```bash
 gcloud compute ssh openclaw-gateway --zone=us-central1-a
 ```
 
-**1.4 -- Install Homebrew and Node.js on the VM**
+**1.5 -- Install Homebrew and Node.js on the VM**
 
 ```bash
 sudo apt-get update
@@ -115,7 +138,7 @@ node --version   # should show v22.x.x
 npm --version
 ```
 
-**1.5 -- Install and configure OpenClaw**
+**1.6 -- Install and configure OpenClaw**
 
 ```bash
 npm install -g openclaw@latest
@@ -128,7 +151,7 @@ The onboarding wizard will walk you through Gateway initialization, workspace se
 - **OpenAI (GPT):** get your key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 - **Google (Gemini):** get your key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 
-**1.6 -- Start the Gateway**
+**1.7 -- Start the Gateway**
 
 ```bash
 openclaw gateway --port 18789
@@ -143,7 +166,7 @@ openclaw gateway --port 18789
 > # Press Ctrl+B then D to detach; reattach later with: tmux attach -t openclaw
 > ```
 
-**1.7 -- Access the dashboard via SSH tunnel**
+**1.8 -- Access the dashboard via SSH tunnel**
 
 From your local machine (not the VM):
 
@@ -153,7 +176,7 @@ gcloud compute ssh openclaw-gateway --zone=us-central1-a -- -L 18789:127.0.0.1:1
 
 Open your browser to `http://127.0.0.1:18789/` to see the OpenClaw dashboard.
 
-**1.8 -- Verify it's running**
+**1.9 -- Verify it's running**
 
 ```bash
 openclaw doctor
