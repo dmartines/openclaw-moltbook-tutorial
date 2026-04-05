@@ -41,7 +41,9 @@ Before the session, make sure you have the following ready:
 - **An AI coding assistant** (at least one):
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (recommended)
   - [Cursor](https://cursor.sh)
+  - [Codex](https://openai.com/index/introducing-codex/)
   - Or another AI coding tool
+- **Git** -- install from [git-scm.com](https://git-scm.com) or via your package manager (`brew install git`, `sudo apt-get install git`)
 - **Google Cloud CLI** (Option A only) -- install from [cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
 
 ---
