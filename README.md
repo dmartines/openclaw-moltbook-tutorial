@@ -254,75 +254,130 @@ This command diagnoses any configuration or security issues.
 
 These steps apply regardless of whether you chose GCP or laptop in Part 1.
 
-**2.1 -- Create a Slack App**
+**2.1 -- Create a Slack App using an App Manifest (Recommended)**
+
+Using an app manifest lets you create your Slack app with all the required scopes, events, and settings pre-configured in a single step -- no manual toggles needed.
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps)
-2. Click **Create New App** > **From scratch**
-3. Name your app (e.g., "OpenClaw Agent") and select your workspace
-4. Click **Create App**
+2. Click **Create New App** > **From an app manifest**
+3. Select your workspace and click **Next**
+4. Choose **JSON** format and paste the following manifest:
 
-**2.2 -- Enable Socket Mode**
+```json
+{
+    "display_information": {
+        "name": "OpenClaw Agent",
+        "description": "OpenClaw AI agent for Slack",
+        "background_color": "#4338CA"
+    },
+    "features": {
+        "app_home": {
+            "home_tab_enabled": false,
+            "messages_tab_enabled": true,
+            "messages_tab_read_only_enabled": false
+        },
+        "bot_user": {
+            "display_name": "OpenClaw Agent",
+            "always_online": false
+        },
+        "slash_commands": [
+            {
+                "command": "/openclaw",
+                "description": "Send a message to OpenClaw Agent",
+                "should_escape": false
+            }
+        ]
+    },
+    "oauth_config": {
+        "scopes": {
+            "user": [
+                "channels:history",
+                "channels:read",
+                "groups:history",
+                "groups:read",
+                "im:history",
+                "im:read",
+                "mpim:history",
+                "mpim:read",
+                "users:read",
+                "reactions:read",
+                "pins:read",
+                "emoji:read",
+                "search:read"
+            ],
+            "bot": [
+                "chat:write",
+                "channels:history",
+                "channels:read",
+                "groups:history",
+                "groups:read",
+                "groups:write",
+                "im:history",
+                "im:read",
+                "im:write",
+                "mpim:history",
+                "mpim:read",
+                "mpim:write",
+                "users:read",
+                "app_mentions:read",
+                "reactions:read",
+                "reactions:write",
+                "pins:read",
+                "pins:write",
+                "emoji:read",
+                "commands",
+                "files:read",
+                "files:write"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "bot_events": [
+                "app_mention",
+                "message.channels",
+                "message.groups",
+                "message.im",
+                "message.mpim",
+                "reaction_added",
+                "reaction_removed",
+                "member_joined_channel",
+                "member_left_channel",
+                "channel_rename",
+                "pin_added",
+                "pin_removed"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": true,
+        "token_rotation_enabled": false
+    }
+}
+```
 
-1. In the left sidebar, click **Socket Mode**
-2. Toggle **Enable Socket Mode** to ON
-3. When prompted, create an App-Level Token:
-  - Name it `openclaw-socket`
-  - Add the scope `connections:write`
-  - Click **Generate**
-4. Copy the token that starts with `xapp-...` -- you will need this
+> **Tip:** Feel free to change the `name`, `display_name`, and `command` fields to customize your app. The scopes and events above are the minimum required for OpenClaw.
 
-**2.3 -- Add Bot Token Scopes**
+5. Click **Next**, review the summary, and click **Create**
+
+**2.2 -- Generate an App-Level Token**
+
+1. After creating the app, go to **Settings** > **Basic Information**
+2. Scroll down to **App-Level Tokens** and click **Generate Token and Scopes**
+3. Name it `openclaw-socket`
+4. Add the scope `connections:write`
+5. Click **Generate**
+6. Copy the token that starts with `xapp-...` -- you will need this
+
+**2.3 -- Install the App to Your Workspace**
 
 1. In the left sidebar, go to **OAuth & Permissions**
-2. Scroll to **Scopes** > **Bot Token Scopes**
-3. Add these scopes:
-
-  | Scope               | Purpose                       |
-  | ------------------- | ----------------------------- |
-  | `chat:write`        | Send messages                 |
-  | `channels:history`  | Read channel messages         |
-  | `channels:read`     | List channels                 |
-  | `groups:history`    | Read private channel messages |
-  | `im:history`        | Read DM messages              |
-  | `im:read`           | View DM info                  |
-  | `im:write`          | Open DMs                      |
-  | `mpim:history`      | Read group DMs                |
-  | `mpim:read`         | View group DM info            |
-  | `mpim:write`        | Open group DMs                |
-  | `users:read`        | List users                    |
-  | `app_mentions:read` | Detect @mentions              |
-  | `reactions:read`    | Read reactions                |
-  | `reactions:write`   | Add reactions                 |
-  | `files:read`        | Read files                    |
-  | `files:write`       | Upload files                  |
-
-
-**2.4 -- Subscribe to Bot Events**
-
-1. In the left sidebar, go to **Event Subscriptions**
-2. Toggle **Enable Events** to ON
-3. Under **Subscribe to bot events**, add:
-  - `app_mention`
-  - `message.channels`
-  - `message.groups`
-  - `message.im`
-  - `message.mpim`
-  - `reaction_added`
-  - `reaction_removed`
-
-**2.5 -- Enable App Home**
-
-1. In the left sidebar, go to **App Home**
-2. Under **Show Tabs**, enable the **Messages Tab**
-3. Check **Allow users to send Slash commands and messages from the messages tab**
-
-**2.6 -- Install the App to Your Workspace**
-
-1. Go to **OAuth & Permissions**
 2. Click **Install to Workspace** and authorize
 3. Copy the **Bot User OAuth Token** that starts with `xoxb-...`
 
-**2.7 -- Connect Slack to OpenClaw**
+**2.4 -- Connect Slack to OpenClaw**
 
 Run the channel login command and follow the prompts:
 
@@ -333,9 +388,9 @@ openclaw channels login
 When prompted, select **Slack** and enter:
 
 - Your **App Token** (`xapp-...` from step 2.2)
-- Your **Bot Token** (`xoxb-...` from step 2.6)
+- Your **Bot Token** (`xoxb-...` from step 2.3)
 
-**2.8 -- Restart the Gateway**
+**2.5 -- Restart the Gateway**
 
 ```bash
 # Stop the running gateway (Ctrl+C) and restart
@@ -344,13 +399,13 @@ openclaw gateway --port 18789
 
 > **GCP users with tmux:** Reattach with `tmux attach -t openclaw`, stop the gateway, reconfigure, and restart.
 
-**2.9 -- Test the connection**
+**2.6 -- Test the connection**
 
 1. In Slack, invite the bot to a channel: type `/invite @OpenClaw Agent` (or whatever you named it)
 2. Mention the bot: `@OpenClaw Agent hello!`
 3. You should receive a response from your agent
 
-**2.10 -- Verify channel status**
+**2.7 -- Verify channel status**
 
 ```bash
 openclaw channels status --probe
